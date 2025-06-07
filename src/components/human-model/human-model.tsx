@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Html } from '@react-three/drei';
+import { useEffect, useRef, useState, Suspense } from 'react';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Html, Environment, ContactShadows } from '@react-three/drei';
 import { Card, CardContent } from '@/components/ui/card';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-// Define body parts and their associated symptoms
+// Define body parts and their associated symptoms with more detailed categories
 const bodyPartSymptoms: Record<string, string[]> = {
   head: [
     'Headache',
@@ -14,6 +16,12 @@ const bodyPartSymptoms: Record<string, string[]> = {
     'Ear pain',
     'Sore throat',
     'Facial pain',
+  ],
+  neck: [
+    'Neck pain',
+    'Stiffness',
+    'Swollen lymph nodes',
+    'Difficulty swallowing',
   ],
   chest: [
     'Chest pain',
@@ -30,12 +38,24 @@ const bodyPartSymptoms: Record<string, string[]> = {
     'Constipation',
     'Bloating',
   ],
+  back: [
+    'Upper back pain',
+    'Lower back pain',
+    'Spine pain',
+    'Muscle spasms',
+  ],
   arms: [
     'Arm pain',
     'Joint pain',
     'Muscle weakness',
     'Numbness',
     'Tingling',
+  ],
+  hands: [
+    'Hand pain',
+    'Finger numbness',
+    'Wrist pain',
+    'Reduced grip strength',
   ],
   legs: [
     'Leg pain',
@@ -44,16 +64,27 @@ const bodyPartSymptoms: Record<string, string[]> = {
     'Swelling',
     'Difficulty walking',
   ],
+  feet: [
+    'Foot pain',
+    'Heel pain',
+    'Toe numbness',
+    'Swelling',
+  ],
 };
 
-// Simple Human Model Component
-function SimpleHumanModel({
+// Enhanced Human Model Component with GLTF support
+function EnhancedHumanModel({
   onSelectBodyPart,
+  gender = 'male',
 }: {
   onSelectBodyPart: (part: string) => void;
+  gender?: 'male' | 'female';
 }) {
-  // In a real app, you would load a proper GLTF model
-  // For this example, we'll create a simple human shape with primitive geometries
+  // Attempt to load the GLTF model
+  const [modelLoadError, setModelLoadError] = useState(false);
+  const modelPath = `/models/${gender}-anatomy.glb`;
+  // const modelPath = `/models/male_2.glb`;
+  // const modelPath = `/models/group.glb`;
   
   // Hover state for each body part
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
@@ -63,15 +94,6 @@ function SimpleHumanModel({
   const handlePointerOut = () => setHoveredPart(null);
   const handleClick = (part: string) => onSelectBodyPart(part);
   
-  // Common material properties
-  const getMaterial = (part: string) => {
-    return {
-      color: hoveredPart === part ? '#3B82F6' : '#64748b',
-      metalness: 0.2,
-      roughness: 0.8,
-    };
-  };
-
   // Slow rotation animation
   const groupRef = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
@@ -80,89 +102,247 @@ function SimpleHumanModel({
     }
   });
 
+  // Try to load the GLTF model
+  const GLTFModel = () => {
+    try {
+      const { scene } = useGLTF(modelPath);
+      
+      // Clone the scene to avoid modifying the cached original
+      const clonedScene = scene.clone();
+      
+      // Setup the model for interaction
+      clonedScene.traverse((node) => {
+        if (node instanceof THREE.Mesh) {
+          // Determine which body part this mesh belongs to based on its name
+          let bodyPart = 'unknown';
+          const name = node.name.toLowerCase();
+          
+          if (name.includes('head')) bodyPart = 'head';
+          else if (name.includes('neck')) bodyPart = 'neck';
+          else if (name.includes('chest') || name.includes('thorax')) bodyPart = 'chest';
+          else if (name.includes('abdomen') || name.includes('stomach')) bodyPart = 'abdomen';
+          else if (name.includes('back') || name.includes('spine')) bodyPart = 'back';
+          else if (name.includes('arm') || name.includes('shoulder')) bodyPart = 'arms';
+          else if (name.includes('hand') || name.includes('wrist')) bodyPart = 'hands';
+          else if (name.includes('leg') || name.includes('thigh') || name.includes('knee')) bodyPart = 'legs';
+          else if (name.includes('foot') || name.includes('ankle') || name.includes('toe')) bodyPart = 'feet';
+          
+          // Store the body part name for interaction
+          node.userData.bodyPart = bodyPart;
+          
+          // Make the mesh interactive
+          node.userData.originalMaterial = node.material.clone();
+          node.material = new THREE.MeshStandardMaterial({
+            color: 0x64748b,
+            metalness: 0.2,
+            roughness: 0.8,
+          });
+        }
+      });
+      
+      return (
+        <primitive 
+          object={clonedScene} 
+          scale={[1, 1, 1]} 
+          position={[0, -1, 0]}
+          onPointerOver={(e) => {
+            e.stopPropagation();
+            if (e.object.userData.bodyPart) {
+              handlePointerOver(e.object.userData.bodyPart);
+              e.object.material.color.set(0x3B82F6);
+            }
+          }}
+          onPointerOut={(e) => {
+            e.stopPropagation();
+            handlePointerOut();
+            if (e.object.userData.bodyPart) {
+              e.object.material.color.set(0x64748b);
+            }
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (e.object.userData.bodyPart) {
+              handleClick(e.object.userData.bodyPart);
+            }
+          }}
+        />
+      );
+    } catch (error) {
+      console.error('Error loading GLTF model:', error);
+      setModelLoadError(true);
+      return null;
+    }
+  };
+
+  // Fallback to simple model if GLTF fails to load
+  const SimpleModel = () => {
+    // Common material properties
+    const getMaterial = (part: string) => {
+      return {
+        color: hoveredPart === part ? '#3B82F6' : '#64748b',
+        metalness: 0.2,
+        roughness: 0.8,
+      };
+    };
+
+    return (
+      <>
+        {/* Head */}
+        <mesh
+          position={[0, 1.7, 0]}
+          onPointerOver={() => handlePointerOver('head')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('head')}
+        >
+          <sphereGeometry args={[0.25, 32, 32]} />
+          <meshStandardMaterial {...getMaterial('head')} />
+        </mesh>
+
+        {/* Neck */}
+        <mesh
+          position={[0, 1.45, 0]}
+          onPointerOver={() => handlePointerOver('neck')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('neck')}
+        >
+          <cylinderGeometry args={[0.1, 0.12, 0.15, 32]} />
+          <meshStandardMaterial {...getMaterial('neck')} />
+        </mesh>
+
+        {/* Body - Chest */}
+        <mesh
+          position={[0, 1.1, 0]}
+          onPointerOver={() => handlePointerOver('chest')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('chest')}
+        >
+          <capsuleGeometry args={[0.25, 0.5, 16, 32]} />
+          <meshStandardMaterial {...getMaterial('chest')} />
+        </mesh>
+
+        {/* Abdomen */}
+        <mesh
+          position={[0, 0.5, 0]}
+          onPointerOver={() => handlePointerOver('abdomen')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('abdomen')}
+        >
+          <capsuleGeometry args={[0.27, 0.4, 16, 32]} />
+          <meshStandardMaterial {...getMaterial('abdomen')} />
+        </mesh>
+
+        {/* Back */}
+        <mesh
+          position={[0, 0.8, -0.15]}
+          onPointerOver={() => handlePointerOver('back')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('back')}
+        >
+          <boxGeometry args={[0.4, 0.8, 0.1]} />
+          <meshStandardMaterial {...getMaterial('back')} />
+        </mesh>
+
+        {/* Left Arm */}
+        <mesh
+          position={[-0.4, 1, 0]}
+          rotation={[0, 0, -Math.PI / 6]}
+          onPointerOver={() => handlePointerOver('arms')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('arms')}
+        >
+          <capsuleGeometry args={[0.08, 0.7, 16, 32]} />
+          <meshStandardMaterial {...getMaterial('arms')} />
+        </mesh>
+
+        {/* Right Arm */}
+        <mesh
+          position={[0.4, 1, 0]}
+          rotation={[0, 0, Math.PI / 6]}
+          onPointerOver={() => handlePointerOver('arms')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('arms')}
+        >
+          <capsuleGeometry args={[0.08, 0.7, 16, 32]} />
+          <meshStandardMaterial {...getMaterial('arms')} />
+        </mesh>
+
+        {/* Left Hand */}
+        <mesh
+          position={[-0.55, 0.7, 0]}
+          onPointerOver={() => handlePointerOver('hands')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('hands')}
+        >
+          <boxGeometry args={[0.1, 0.15, 0.05]} />
+          <meshStandardMaterial {...getMaterial('hands')} />
+        </mesh>
+
+        {/* Right Hand */}
+        <mesh
+          position={[0.55, 0.7, 0]}
+          onPointerOver={() => handlePointerOver('hands')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('hands')}
+        >
+          <boxGeometry args={[0.1, 0.15, 0.05]} />
+          <meshStandardMaterial {...getMaterial('hands')} />
+        </mesh>
+
+        {/* Left Leg */}
+        <mesh
+          position={[-0.2, -0.2, 0]}
+          rotation={[0, 0, -Math.PI / 32]}
+          onPointerOver={() => handlePointerOver('legs')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('legs')}
+        >
+          <capsuleGeometry args={[0.1, 0.8, 16, 32]} />
+          <meshStandardMaterial {...getMaterial('legs')} />
+        </mesh>
+
+        {/* Right Leg */}
+        <mesh
+          position={[0.2, -0.2, 0]}
+          rotation={[0, 0, Math.PI / 32]}
+          onPointerOver={() => handlePointerOver('legs')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('legs')}
+        >
+          <capsuleGeometry args={[0.1, 0.8, 16, 32]} />
+          <meshStandardMaterial {...getMaterial('legs')} />
+        </mesh>
+
+        {/* Left Foot */}
+        <mesh
+          position={[-0.2, -0.7, 0.1]}
+          onPointerOver={() => handlePointerOver('feet')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('feet')}
+        >
+          <boxGeometry args={[0.12, 0.1, 0.25]} />
+          <meshStandardMaterial {...getMaterial('feet')} />
+        </mesh>
+
+        {/* Right Foot */}
+        <mesh
+          position={[0.2, -0.7, 0.1]}
+          onPointerOver={() => handlePointerOver('feet')}
+          onPointerOut={handlePointerOut}
+          onClick={() => handleClick('feet')}
+        >
+          <boxGeometry args={[0.12, 0.1, 0.25]} />
+          <meshStandardMaterial {...getMaterial('feet')} />
+        </mesh>
+      </>
+    );
+  };
+
   return (
     <group ref={groupRef} position={[0, -1, 0]}>
-      {/* Head */}
-      <mesh
-        position={[0, 1.7, 0]}
-        onPointerOver={() => handlePointerOver('head')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('head')}
-      >
-        <sphereGeometry args={[0.25, 32, 32]} />
-        <meshStandardMaterial {...getMaterial('head')} />
-      </mesh>
-
-      {/* Body */}
-      <mesh
-        position={[0, 1, 0]}
-        onPointerOver={() => handlePointerOver('chest')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('chest')}
-      >
-        <capsuleGeometry args={[0.25, 0.7, 16, 32]} />
-        <meshStandardMaterial {...getMaterial('chest')} />
-      </mesh>
-
-      {/* Abdomen */}
-      <mesh
-        position={[0, 0.5, 0]}
-        onPointerOver={() => handlePointerOver('abdomen')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('abdomen')}
-      >
-        <capsuleGeometry args={[0.27, 0.4, 16, 32]} />
-        <meshStandardMaterial {...getMaterial('abdomen')} />
-      </mesh>
-
-      {/* Left Arm */}
-      <mesh
-        position={[-0.4, 1, 0]}
-        rotation={[0, 0, -Math.PI / 6]}
-        onPointerOver={() => handlePointerOver('arms')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('arms')}
-      >
-        <capsuleGeometry args={[0.08, 0.7, 16, 32]} />
-        <meshStandardMaterial {...getMaterial('arms')} />
-      </mesh>
-
-      {/* Right Arm */}
-      <mesh
-        position={[0.4, 1, 0]}
-        rotation={[0, 0, Math.PI / 6]}
-        onPointerOver={() => handlePointerOver('arms')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('arms')}
-      >
-        <capsuleGeometry args={[0.08, 0.7, 16, 32]} />
-        <meshStandardMaterial {...getMaterial('arms')} />
-      </mesh>
-
-      {/* Left Leg */}
-      <mesh
-        position={[-0.2, -0.2, 0]}
-        rotation={[0, 0, -Math.PI / 32]}
-        onPointerOver={() => handlePointerOver('legs')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('legs')}
-      >
-        <capsuleGeometry args={[0.1, 0.8, 16, 32]} />
-        <meshStandardMaterial {...getMaterial('legs')} />
-      </mesh>
-
-      {/* Right Leg */}
-      <mesh
-        position={[0.2, -0.2, 0]}
-        rotation={[0, 0, Math.PI / 32]}
-        onPointerOver={() => handlePointerOver('legs')}
-        onPointerOut={handlePointerOut}
-        onClick={() => handleClick('legs')}
-      >
-        <capsuleGeometry args={[0.1, 0.8, 16, 32]} />
-        <meshStandardMaterial {...getMaterial('legs')} />
-      </mesh>
-
+      <Suspense fallback={<SimpleModel />}>
+        {!modelLoadError ? <GLTFModel /> : <SimpleModel />}
+      </Suspense>
+      
       {/* Hover label */}
       {hoveredPart && (
         <Html position={[0, 2.2, 0]} center>
@@ -182,6 +362,7 @@ export function HumanModelComponent({
 }) {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [gender, setGender] = useState<'male' | 'female'>('male');
 
   // Handle body part selection
   const handleSelectBodyPart = (part: string) => {
@@ -199,6 +380,11 @@ export function HumanModelComponent({
     });
   };
 
+  // Handle gender toggle
+  const handleGenderToggle = () => {
+    setGender(prev => prev === 'male' ? 'female' : 'male');
+  };
+
   // Update parent component when symptoms change
   useEffect(() => {
     onSelectSymptoms(selectedSymptoms);
@@ -208,10 +394,34 @@ export function HumanModelComponent({
     <div className="w-full h-full flex flex-col md:flex-row gap-4">
       <Card className="flex-1 min-h-[300px] md:min-h-[400px]">
         <CardContent className="p-4 h-full">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-semibold">Human Anatomy Model</h3>
+            <button 
+              onClick={handleGenderToggle}
+              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
+            >
+              {gender === 'male' ? 'Switch to Female' : 'Switch to Male'}
+            </button>
+          </div>
+          
           <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} intensity={0.8} />
-            <SimpleHumanModel onSelectBodyPart={handleSelectBodyPart} />
+            <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} intensity={0.5} castShadow />
+            
+            <EnhancedHumanModel 
+              onSelectBodyPart={handleSelectBodyPart} 
+              gender={gender}
+            />
+            
+            <ContactShadows 
+              position={[0, -1.5, 0]} 
+              opacity={0.4} 
+              scale={10} 
+              blur={2} 
+              far={4} 
+            />
+            
             <OrbitControls 
               enablePan={false} 
               minDistance={3} 
