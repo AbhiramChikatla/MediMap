@@ -1,21 +1,18 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, Polyline } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { AlertCircle, MapPin, Navigation } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-// Fix Leaflet marker icon issue in Next.js
-const customIcon = (color: string) => {
-  return new L.DivIcon({
-    className: 'custom-div-icon',
-    html: `<div style="background-color: ${color}; width: 25px; height: 25px; border-radius: 50%; border: 2px solid white;"></div>`,
-    iconSize: [25, 25],
-    iconAnchor: [12, 12],
-  });
-};
+// Dynamically import Leaflet components with no SSR
+const MapComponents = dynamic(
+  () => import('./map-components'),
+  { ssr: false }
+);
 
 // Hospital interface
 interface Hospital {
@@ -52,60 +49,46 @@ const sampleHospitals: Hospital[] = [
   },
 ];
 
-// Component to recenter map when user location changes
-function SetViewOnUserLocation({ coords }: { coords: [number, number] | null }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (coords) {
-      map.setView(coords, 13);
-    }
-  }, [coords, map]);
-  
-  return null;
+// Enum for location detection status
+enum LocationStatus {
+  INITIAL = 'initial',
+  LOADING = 'loading',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  PERMISSION_DENIED = 'permission_denied',
+  TIMEOUT = 'timeout',
+  UNAVAILABLE = 'unavailable',
 }
 
-// Component to draw route between two points
-function RouteLine({ from, to }: { from: [number, number]; to: [number, number] }) {
-  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
-  const map = useMap();
-
-  useEffect(() => {
-    const fetchRoute = async () => {
-      try {
-        // Using OSRM demo server - in production use a dedicated service
-        const response = await fetch(
-          `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`
-        );
-        const data = await response.json();
-        
-        if (data.routes && data.routes.length > 0) {
-          // OSRM returns coordinates as [longitude, latitude], we need to swap them for Leaflet
-          const coords = data.routes[0].geometry.coordinates.map(
-            (coord: [number, number]) => [coord[1], coord[0]] as [number, number]
-          );
-          setRouteCoords(coords);
-        }
-      } catch (error) {
-        console.error('Error fetching route:', error);
-      }
-    };
-
-    if (from && to) {
-      fetchRoute();
+// Function to get location from IP address
+async function getLocationFromIP(): Promise<[number, number] | null> {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    const data = await response.json();
+    if (data.latitude && data.longitude) {
+      return [data.latitude, data.longitude];
     }
-  }, [from, to]);
-
-  return routeCoords.length > 0 ? (
-    <Polyline 
-      positions={routeCoords} 
-      color="#3B82F6" 
-      weight={4} 
-      opacity={0.7} 
-      dashArray="10, 10"
-    />
-  ) : null;
+    return null;
+  } catch (error) {
+    console.error('Error getting location from IP:', error);
+    return null;
+  }
 }
+
+// Fallback to IP geolocation when browser geolocation fails
+const fallbackToIPGeolocation = async (): Promise<[number, number] | null> => {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    const data = await response.json();
+    if (data.latitude && data.longitude) {
+      return [data.latitude, data.longitude];
+    }
+    return null;
+  } catch (error) {
+    console.error('IP geolocation failed:', error);
+    return null;
+  }
+};
 
 export function MapComponent({
   userCoords,
@@ -121,30 +104,138 @@ export function MapComponent({
   const [hospitals, setHospitals] = useState<Hospital[]>(sampleHospitals);
   const [filteredHospitals, setFilteredHospitals] = useState<Hospital[]>([]);
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>(LocationStatus.INITIAL);
+  const [locationError, setLocationError] = useState<string>('');
+  const [manualLocation, setManualLocation] = useState<{address: string, isSearching: boolean}>({
+    address: '',
+    isSearching: false
+  });
+  const [highAccuracy, setHighAccuracy] = useState<boolean>(true);
+  const [locationPermissionDenied, setLocationPermissionDenied] = useState<boolean>(false);
+  const [selectedCity, setSelectedCity] = useState<string>('');
   
   // Get user location if not provided
   useEffect(() => {
-    if (!userCoords && navigator.geolocation) {
-      setIsLoading(true);
+    if (typeof window === 'undefined') return; // Skip on server-side
+    
+    if (userCoords) {
+      setCoords(userCoords);
+      setLocationStatus(LocationStatus.SUCCESS);
+      return;
+    }
+    
+    const detectLocation = async () => {
+      if (!navigator.geolocation) {
+        setLocationStatus(LocationStatus.UNAVAILABLE);
+        setLocationError('Geolocation is not supported by your browser');
+        // Try IP-based fallback
+        const ipLocation = await fallbackToIPGeolocation();
+        if (ipLocation) {
+          setCoords(ipLocation);
+          setLocationStatus(LocationStatus.SUCCESS);
+        }
+        return;
+      }
+      
+      setLocationStatus(LocationStatus.LOADING);
+      
+      // Progressive Enhancement: Try high accuracy first with short timeout
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLocation: [number, number] = [position.coords.latitude, position.coords.longitude];
           setCoords(userLocation);
-          setIsLoading(false);
+          setLocationStatus(LocationStatus.SUCCESS);
         },
-        (error) => {
-          console.error('Error getting location:', error);
-          setIsLoading(false);
-        }
+        () => {
+          // If high accuracy fails or times out, try with lower accuracy
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const userLocation: [number, number] = [position.coords.latitude, position.coords.longitude];
+              setCoords(userLocation);
+              setLocationStatus(LocationStatus.SUCCESS);
+            },
+            async (finalError) => {
+              console.error('Error getting location with lower accuracy:', finalError);
+              handleLocationError(finalError);
+              
+              // Try IP-based fallback
+              const ipLocation = await fallbackToIPGeolocation();
+              if (ipLocation) {
+                setCoords(ipLocation);
+                setLocationStatus(LocationStatus.SUCCESS);
+              }
+            },
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 0 }
+          );
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
-    } else if (userCoords) {
-      setCoords(userCoords);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
+    };
+    
+    detectLocation();
   }, [userCoords]);
+  
+  // Handle geolocation errors
+  const handleLocationError = (error: GeolocationPositionError) => {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        setLocationStatus(LocationStatus.PERMISSION_DENIED);
+        setLocationError('You denied the request for geolocation. Please enable location services in your browser settings.');
+        setLocationPermissionDenied(true); // Set permission denied flag for enhanced UI guidance
+        break;
+      case error.POSITION_UNAVAILABLE:
+        setLocationStatus(LocationStatus.UNAVAILABLE);
+        setLocationError('Location information is unavailable. Please try again or enter your location manually.');
+        break;
+      case error.TIMEOUT:
+        setLocationStatus(LocationStatus.TIMEOUT);
+        setLocationError('The request to get your location timed out. Please try again or enter your location manually.');
+        break;
+      default:
+        setLocationStatus(LocationStatus.ERROR);
+        setLocationError('An unknown error occurred while trying to get your location.');
+        break;
+    }
+  };
+  
+  // Handle manual location search
+  const handleManualLocationSearch = async () => {
+    if (!manualLocation.address.trim()) return;
+    
+    setManualLocation(prev => ({ ...prev, isSearching: true }));
+    try {
+      // Using Nominatim OpenStreetMap API for geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(manualLocation.address)}`
+      );
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const location: [number, number] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        setCoords(location);
+        setLocationStatus(LocationStatus.SUCCESS);
+      } else {
+        setLocationError('Could not find the location. Please try a different address.');
+      }
+    } catch (error) {
+      console.error('Error searching location:', error);
+      setLocationError('Error searching for location. Please try again.');
+    } finally {
+      setManualLocation(prev => ({ ...prev, isSearching: false }));
+    }
+  };
+  
+  // Handle manual location input for autocomplete suggestions
+  const handleManualLocationInput = (value: string) => {
+    setManualLocation(prev => ({ ...prev, address: value }));
+  };
+  
+  // Handle city selection from dropdown
+  const handleCitySelection = (city: string, coordinates: [number, number]) => {
+    setSelectedCity(city);
+    setCoords(coordinates);
+    setLocationStatus(LocationStatus.SUCCESS);
+  };
 
   // Calculate distance between two coordinates in meters
   const calculateDistance = useCallback((point1: [number, number], point2: [number, number]): number => {
@@ -230,7 +321,8 @@ export function MapComponent({
     return Array.from(relevantSpecialties);
   };
 
-  if (isLoading) {
+  // Render loading state
+  if (locationStatus === LocationStatus.LOADING) {
     return (
       <Card className="w-full h-full overflow-hidden border-0 shadow-none">
         <CardContent className="p-4 h-full flex items-center justify-center">
@@ -243,188 +335,135 @@ export function MapComponent({
     );
   }
 
-  if (!coords) {
+  // Render error state with fallback options
+  if (locationStatus !== LocationStatus.SUCCESS && !coords) {
     return (
       <Card className="w-full h-full overflow-hidden border-0 shadow-none">
-        <CardContent className="p-4 h-full flex items-center justify-center">
-          <div className="text-center">
-            <p className="mb-4">Unable to detect your location</p>
-            <Button 
-              onClick={() => {
-                if (navigator.geolocation) {
-                  setIsLoading(true);
-                  navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                      setCoords([position.coords.latitude, position.coords.longitude]);
-                      setIsLoading(false);
-                    },
-                    (error) => {
-                      console.error('Error getting location:', error);
-                      setIsLoading(false);
-                    }
-                  );
-                }
-              }}
-            >
-              Try Again
-            </Button>
+        <CardContent className="p-4 h-full flex flex-col items-center justify-center">
+          <div className="text-center max-w-md w-full">
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Location Error</AlertTitle>
+              <AlertDescription>{locationError}</AlertDescription>
+            </Alert>
+            
+            <div className="space-y-4">
+              {/* Manual location input */}
+              <div className="space-y-2">
+                <h3 className="font-medium">Enter your location manually</h3>
+                <div className="flex space-x-2">
+                  <Input 
+                    placeholder="Enter your city or postal code" 
+                    value={manualLocation.address}
+                    onChange={(e) => handleManualLocationInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleManualLocationSearch()}
+                  />
+                  <Button 
+                    onClick={handleManualLocationSearch}
+                    disabled={manualLocation.isSearching || !manualLocation.address.trim()}
+                  >
+                    {manualLocation.isSearching ? (
+                      <div className="animate-spin h-4 w-4 border-b-2 border-white rounded-full mr-2"></div>
+                    ) : (
+                      <MapPin className="h-4 w-4 mr-2" />
+                    )}
+                    Search
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Major cities dropdown */}
+              <div className="space-y-2">
+                <h3 className="font-medium">Or select a major city</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { name: 'Hyderabad', coords: [17.4123, 78.4092] },
+                    { name: 'Mumbai', coords: [19.0760, 72.8777] },
+                    { name: 'Delhi', coords: [28.6139, 77.2090] },
+                    { name: 'Bangalore', coords: [12.9716, 77.5946] }
+                  ].map(city => (
+                    <Button 
+                      key={city.name}
+                      variant="outline"
+                      className={selectedCity === city.name ? 'bg-blue-100' : ''}
+                      onClick={() => handleCitySelection(city.name, city.coords as [number, number])}
+                    >
+                      {city.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Try again with browser geolocation */}
+              <div className="space-y-2">
+                <h3 className="font-medium">Try browser geolocation again</h3>
+                <div className="flex space-x-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setLocationStatus(LocationStatus.INITIAL);
+                    }}
+                  >
+                    <Navigation className="h-4 w-4 mr-2" />
+                    Try with High Accuracy
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setLocationStatus(LocationStatus.INITIAL);
+                    }}
+                  >
+                    <Navigation className="h-4 w-4 mr-2" />
+                    Try with Low Accuracy
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Location permission guidance */}
+              {locationPermissionDenied && (
+                <Alert className="mt-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Location Permission Denied</AlertTitle>
+                  <AlertDescription>
+                    <p className="mb-2">To enable location services:</p>
+                    <ol className="list-decimal pl-5 space-y-1 text-sm">
+                      <li>Click the lock/info icon in your browser's address bar</li>
+                      <li>Find "Location" or "Site settings"</li>
+                      <li>Change the permission to "Allow"</li>
+                      <li>Refresh this page</li>
+                    </ol>
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {/* Use default location */}
+              <div className="space-y-2">
+                <h3 className="font-medium">Or use a default location</h3>
+                <Button 
+                  variant="secondary"
+                  onClick={() => {
+                    setCoords([17.4123, 78.4092]); // Hyderabad
+                    setLocationStatus(LocationStatus.SUCCESS);
+                  }}
+                >
+                  Use Hyderabad as Default
+                </Button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
     );
   }
 
+  // Pass all necessary props to the dynamically loaded map components
   return (
-    <Card className="w-full h-full overflow-hidden border-0 shadow-none">
-      <CardContent className="p-0 h-full">
-        <MapContainer
-          center={coords}
-          zoom={13}
-          style={{ height: '100%', width: '100%', zIndex: 0 }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          
-          {/* User location marker */}
-          {coords && (
-            <>
-              <Marker 
-                position={coords} 
-                icon={customIcon('#FF4136')}
-              >
-                <Popup>
-                  <div className="text-center">
-                    <strong>Your location</strong>
-                  </div>
-                </Popup>
-              </Marker>
-              
-              {/* Search radius circle */}
-              <Circle 
-                center={coords} 
-                radius={searchRadius} 
-                pathOptions={{ color: '#3B82F6', fillColor: '#3B82F6', fillOpacity: 0.1 }}
-              />
-            </>
-          )}
-          
-          {/* Hospital markers */}
-          {filteredHospitals.map((hospital) => (
-            <Marker
-              key={hospital.id}
-              position={hospital.position}
-              icon={customIcon('#0074D9')}
-              eventHandlers={{
-                click: () => setSelectedHospital(hospital)
-              }}
-            >
-              <Popup>
-                <div className="max-w-xs">
-                  <h3 className="font-bold text-sm">{hospital.name}</h3>
-                  <p className="text-xs text-gray-600 mt-1">{hospital.address}</p>
-                  {hospital.distance !== undefined && (
-                    <p className="text-xs font-medium mt-1">
-                      Distance: {(hospital.distance / 1000).toFixed(1)} km
-                    </p>
-                  )}
-                  <div className="mt-2">
-                    <p className="text-xs font-semibold">Specialties:</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {hospital.specialties.map((specialty, index) => (
-                        <span 
-                          key={index} 
-                          className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full"
-                        >
-                          {specialty}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <Button 
-                    className="w-full mt-3 text-xs py-1" 
-                    size="sm"
-                    onClick={() => setSelectedHospital(hospital)}
-                  >
-                    Show Route
-                  </Button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-          
-          {/* Route line */}
-          {coords && selectedHospital && (
-            <RouteLine from={coords} to={selectedHospital.position} />
-          )}
-          
-          {/* Update map view when user location changes */}
-          <SetViewOnUserLocation coords={coords} />
-        </MapContainer>
-        
-        {/* Hospital info panel */}
-        {selectedHospital && (
-          <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10 max-w-md mx-auto">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-bold">{selectedHospital.name}</h3>
-                <p className="text-sm text-gray-600">{selectedHospital.address}</p>
-                {selectedHospital.distance !== undefined && (
-                  <p className="text-sm font-medium mt-1">
-                    Distance: {(selectedHospital.distance / 1000).toFixed(1)} km
-                  </p>
-                )}
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 w-6 p-0"
-                onClick={() => setSelectedHospital(null)}
-              >
-                ✕
-              </Button>
-            </div>
-            <div className="mt-2">
-              <p className="text-sm font-semibold">Specialties:</p>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {selectedHospital.specialties.map((specialty, index) => (
-                  <span 
-                    key={index} 
-                    className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full"
-                  >
-                    {specialty}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="mt-3 flex space-x-2">
-              <Button 
-                className="flex-1" 
-                size="sm"
-                onClick={() => {
-                  // In a real app, this would open directions in Google Maps or similar
-                  const url = `https://www.google.com/maps/dir/?api=1&origin=${coords[0]},${coords[1]}&destination=${selectedHospital.position[0]},${selectedHospital.position[1]}&travelmode=driving`;
-                  window.open(url, '_blank');
-                }}
-              >
-                Get Directions
-              </Button>
-              <Button 
-                className="flex-1" 
-                size="sm" 
-                variant="outline"
-                onClick={() => {
-                  // In a real app, this would call a phone number or booking system
-                  alert('Booking functionality would be implemented here');
-                }}
-              >
-                Book Appointment
-              </Button>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <MapComponents
+      coords={coords}
+      filteredHospitals={filteredHospitals}
+      selectedHospital={selectedHospital}
+      setSelectedHospital={setSelectedHospital}
+      searchRadius={searchRadius}
+    />
   );
 }

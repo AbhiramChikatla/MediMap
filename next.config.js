@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['img.clerk.com'], // Allow Clerk images
+    domains: ['img.clerk.com','images.unsplash.com'], // Allow Clerk images
   },
   webpack: (config) => {
     // Resolve issues with sharp library for 3D model libraries

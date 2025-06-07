@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['images.clerk.dev', 'img.clerk.com'],
+    domains: ['images.clerk.dev', 'img.clerk.com','images.unsplash.com'],
   },
   // Add any other Next.js configuration options here
   webpack: (config) => {
