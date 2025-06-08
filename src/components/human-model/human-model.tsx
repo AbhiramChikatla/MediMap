@@ -82,7 +82,7 @@ function EnhancedHumanModel({
 }) {
   // Attempt to load the GLTF model
   const [modelLoadError, setModelLoadError] = useState(false);
-  const modelPath = `/models/${gender}-anatomy.glb`;
+  const modelPath = `/models/group.glb`;
   // const modelPath = `/models/male_2.glb`;
   // const modelPath = `/models/group.glb`;
   
@@ -398,7 +398,7 @@ export function HumanModelComponent({
             <h3 className="text-lg font-semibold">Human Anatomy Model</h3>
             <button 
               onClick={handleGenderToggle}
-              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
+              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-md text-sm min-w-[140px] "
             >
               {gender === 'male' ? 'Switch to Female' : 'Switch to Male'}
             </button>
