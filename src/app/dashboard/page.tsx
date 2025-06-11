@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { HumanModelComponent } from '@/components/human-model/human-model';
 import { SymptomForm } from '@/components/symptom-selector/symptom-form';
-import { MapComponent } from '@/components/map/map-component';
+import { GoogleMapsWithRouteFinder } from '@/components/map/google-maps-with-route-finder';
 
 export default function DashboardPage() {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
@@ -58,19 +58,14 @@ export default function DashboardPage() {
         </div>
       </div>
       
-      {/* Map Component */}
+      {/* Map Component with Route Finder */}
       {showResults && (
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4 text-blue-600">Healthcare Centers Near You</h2>
-          <div className="h-[600px] w-full rounded-lg overflow-hidden shadow-lg">
-            <MapComponent 
-              selectedSymptoms={selectedSymptoms} 
-              searchRadius={searchRadius}
-              isEmergency={isEmergency}
-              insuranceProviders={insuranceProviders}
-              specialties={specialties}
-            />
-          </div>
+          <GoogleMapsWithRouteFinder 
+            selectedSymptoms={selectedSymptoms} 
+            searchRadius={searchRadius}
+          />
         </div>
       )}
     </div>
