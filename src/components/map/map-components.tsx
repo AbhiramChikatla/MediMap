@@ -1,21 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, Polyline } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { useEffect, useState, useRef } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import * as turf from '@turf/helpers';
+import circle from '@turf/circle';
+import distance from '@turf/distance';
 
-// Fix Leaflet marker icon issue in Next.js
-const customIcon = (color: string) => {
-  return new L.DivIcon({
-    className: 'custom-div-icon',
-    html: `<div style="background-color: ${color}; width: 25px; height: 25px; border-radius: 50%; border: 2px solid white;"></div>`,
-    iconSize: [25, 25],
-    iconAnchor: [12, 12],
-  });
-};
+// Set your Mapbox access token here
+// Replace with your actual Mapbox access token
+mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaXJhbWNoaWthdGxhMTExIiwiYSI6ImNtYm5xcHcxMDF3cXUyaXF4OWlia2w0NHUifQ.Fz2w3v30n4S0Mo9sxP82YA';
 
 // Hospital interface
 interface Hospital {
@@ -25,61 +21,6 @@ interface Hospital {
   specialties: string[];
   address: string;
   distance?: number; // Distance from user in meters
-}
-
-// Component to recenter map when user location changes
-function SetViewOnUserLocation({ coords }: { coords: [number, number] | null }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (coords) {
-      map.setView(coords, 13);
-    }
-  }, [coords, map]);
-  
-  return null;
-}
-
-// Component to draw route between two points
-function RouteLine({ from, to }: { from: [number, number]; to: [number, number] }) {
-  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
-  const map = useMap();
-
-  useEffect(() => {
-    const fetchRoute = async () => {
-      try {
-        // Using OSRM demo server - in production use a dedicated service
-        const response = await fetch(
-          `https://router.project-osrm.org/route/v1/driving/${from[1]},${from[0]};${to[1]},${to[0]}?overview=full&geometries=geojson`
-        );
-        const data = await response.json();
-        
-        if (data.routes && data.routes.length > 0) {
-          // OSRM returns coordinates as [longitude, latitude], we need to swap them for Leaflet
-          const coords = data.routes[0].geometry.coordinates.map(
-            (coord: [number, number]) => [coord[1], coord[0]] as [number, number]
-          );
-          setRouteCoords(coords);
-        }
-      } catch (error) {
-        console.error('Error fetching route:', error);
-      }
-    };
-
-    if (from && to) {
-      fetchRoute();
-    }
-  }, [from, to]);
-
-  return routeCoords.length > 0 ? (
-    <Polyline 
-      positions={routeCoords} 
-      color="#3B82F6" 
-      weight={4} 
-      opacity={0.7} 
-      dashArray="10, 10"
-    />
-  ) : null;
 }
 
 interface MapComponentsProps {
@@ -97,94 +38,316 @@ export default function MapComponents({
   setSelectedHospital,
   searchRadius
 }: MapComponentsProps) {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const userMarker = useRef<mapboxgl.Marker | null>(null);
+  const hospitalMarkers = useRef<mapboxgl.Marker[]>([]);
+  const radiusCircle = useRef<string | null>(null);
+  const routeSource = useRef<string | null>(null);
+  const popupRefs = useRef<{[key: string]: mapboxgl.Popup}>({});
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [nearestHospital, setNearestHospital] = useState<Hospital | null>(null);
+  
+  // Initialize map when component mounts
+  useEffect(() => {
+    if (map.current) return; // Initialize map only once
+    
+    if (mapContainer.current) {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: coords ? [coords[1], coords[0]] : [78.4092, 17.4123], // [lng, lat]
+        zoom: 13
+      });
+      
+      // Add navigation controls
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      
+      // Add scale
+      map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
+      
+      map.current.on('load', () => {
+        setMapLoaded(true);
+        
+        // Add sources and layers for route and radius circle
+        if (map.current) {
+          // Add empty GeoJSON source for route
+          map.current.addSource('route', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: []
+              }
+            }
+          });
+          
+          // Add route layer
+          map.current.addLayer({
+            id: 'route',
+            type: 'line',
+            source: 'route',
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#3B82F6',
+              'line-width': 4,
+              'line-opacity': 0.7,
+              'line-dasharray': [2, 1]
+            }
+          });
+          
+          // Add empty GeoJSON source for radius circle
+          map.current.addSource('radius-circle', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'Polygon',
+                coordinates: [[]]
+              }
+            }
+          });
+          
+          // Add radius circle layer
+          map.current.addLayer({
+            id: 'radius-circle',
+            type: 'fill',
+            source: 'radius-circle',
+            paint: {
+              'fill-color': '#3B82F6',
+              'fill-opacity': 0.1,
+              'fill-outline-color': '#3B82F6'
+            }
+          });
+          
+          // Add radius circle outline
+          map.current.addLayer({
+            id: 'radius-circle-outline',
+            type: 'line',
+            source: 'radius-circle',
+            paint: {
+              'line-color': '#3B82F6',
+              'line-width': 2,
+              'line-opacity': 0.8
+            }
+          });
+          
+          routeSource.current = 'route';
+          radiusCircle.current = 'radius-circle';
+        }
+      });
+    }
+    
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, [coords]);
+  
+  // Update user location marker and radius circle when coords change
+  useEffect(() => {
+    if (!mapLoaded || !map.current || !coords) return;
+    
+    // Update map center
+    map.current.flyTo({
+      center: [coords[1], coords[0]],
+      essential: true
+    });
+    
+    // Update or create user marker
+    if (userMarker.current) {
+      userMarker.current.setLngLat([coords[1], coords[0]]);
+    } else {
+      // Create a custom HTML element for the marker
+      const el = document.createElement('div');
+      el.className = 'user-marker';
+      el.style.backgroundColor = '#FF4136';
+      el.style.width = '25px';
+      el.style.height = '25px';
+      el.style.borderRadius = '50%';
+      el.style.border = '2px solid white';
+      
+      // Create and add the marker
+      userMarker.current = new mapboxgl.Marker(el)
+        .setLngLat([coords[1], coords[0]])
+        .setPopup(new mapboxgl.Popup().setHTML('<div class="text-center"><strong>Your location</strong></div>'))
+        .addTo(map.current);
+    }
+    
+    // Update radius circle
+    if (radiusCircle.current && map.current.getSource(radiusCircle.current)) {
+      // Create a circle using turf.js
+      const options = { steps: 64, units: 'meters' as const };
+      const circleFeature = circle(turf.point([coords[1], coords[0]]), searchRadius, options);
+      
+      // Update the source data
+      (map.current.getSource(radiusCircle.current) as mapboxgl.GeoJSONSource).setData(circleFeature);
+    }
+    
+    // Find nearest hospital
+    if (filteredHospitals.length > 0) {
+      let nearest = filteredHospitals[0];
+      let minDistance = distance(
+        turf.point([coords[1], coords[0]]),
+        turf.point([nearest.position[1], nearest.position[0]]),
+        { units: 'meters' as const }
+      );
+      
+      filteredHospitals.forEach(hospital => {
+        const dist = distance(
+          turf.point([coords[1], coords[0]]),
+          turf.point([hospital.position[1], hospital.position[0]]),
+          { units: 'meters' as const }
+        );
+        
+        if (dist < minDistance) {
+          minDistance = dist;
+          nearest = hospital;
+        }
+      });
+      
+      setNearestHospital(nearest);
+    }
+  }, [coords, mapLoaded, searchRadius, filteredHospitals]);
+  
+  // Update hospital markers when filteredHospitals change
+  useEffect(() => {
+    if (!mapLoaded || !map.current) return;
+    
+    // Remove existing markers
+    hospitalMarkers.current.forEach(marker => marker.remove());
+    hospitalMarkers.current = [];
+    
+    // Add new markers
+    filteredHospitals.forEach(hospital => {
+      // Create a custom HTML element for the marker
+      const el = document.createElement('div');
+      el.className = 'hospital-marker';
+      el.style.backgroundColor = '#0074D9';
+      el.style.width = '25px';
+      el.style.height = '25px';
+      el.style.borderRadius = '50%';
+      el.style.border = '2px solid white';
+      el.style.cursor = 'pointer';
+      
+      // Create popup content
+      const popupContent = `
+        <div class="max-w-xs">
+          <h3 class="font-bold text-sm">${hospital.name}</h3>
+          <p class="text-xs text-gray-600 mt-1">${hospital.address}</p>
+          ${hospital.distance !== undefined ? 
+            `<p class="text-xs font-medium mt-1">Distance: ${(hospital.distance / 1000).toFixed(1)} km</p>` : 
+            ''}
+          <div class="mt-2">
+            <p class="text-xs font-semibold">Specialties:</p>
+            <div class="flex flex-wrap gap-1 mt-1">
+              ${hospital.specialties.map(specialty => 
+                `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">${specialty}</span>`
+              ).join('')}
+            </div>
+          </div>
+          <button id="show-route-${hospital.id}" class="w-full mt-3 text-xs py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600">Show Route</button>
+        </div>
+      `;
+      
+      // Create popup
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(popupContent);
+      
+      // Store popup reference
+      popupRefs.current[hospital.id] = popup;
+      
+      // Create and add the marker
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat([hospital.position[1], hospital.position[0]])
+        .setPopup(popup)
+        .addTo(map.current!);
+      
+      // Add click event to marker
+      marker.getElement().addEventListener('click', () => {
+        setSelectedHospital(hospital);
+      });
+      
+      hospitalMarkers.current.push(marker);
+      
+      // Add event listener to the Show Route button in popup
+      popup.on('open', () => {
+        setTimeout(() => {
+          const routeButton = document.getElementById(`show-route-${hospital.id}`);
+          if (routeButton) {
+            routeButton.addEventListener('click', () => {
+              setSelectedHospital(hospital);
+              popup.remove();
+            });
+          }
+        }, 100);
+      });
+    });
+  }, [filteredHospitals, mapLoaded, setSelectedHospital]);
+  
+  // Update route when selectedHospital changes
+  useEffect(() => {
+    if (!mapLoaded || !map.current || !coords || !selectedHospital || !routeSource.current) return;
+    
+    // Fetch route from Mapbox Directions API
+    const fetchRoute = async () => {
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${coords[1]},${coords[0]};${selectedHospital.position[1]},${selectedHospital.position[0]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`
+        );
+        const data = await response.json();
+        
+        if (data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          const routeGeometry = route.geometry;
+          
+          // Update the route source
+          if (map.current && routeSource.current) {
+            (map.current.getSource(routeSource.current) as mapboxgl.GeoJSONSource).setData({
+              type: 'Feature',
+              properties: {},
+              geometry: routeGeometry
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching route:', error);
+      }
+    };
+    
+    fetchRoute();
+    
+    // Highlight the selected hospital marker
+    hospitalMarkers.current.forEach(marker => {
+      const el = marker.getElement();
+      el.style.zIndex = '1';
+      el.style.boxShadow = 'none';
+    });
+    
+    const selectedMarker = hospitalMarkers.current.find(
+      marker => marker.getLngLat().lng === selectedHospital.position[1] && 
+               marker.getLngLat().lat === selectedHospital.position[0]
+    );
+    
+    if (selectedMarker) {
+      const el = selectedMarker.getElement();
+      el.style.zIndex = '2';
+      el.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.5)';
+    }
+  }, [selectedHospital, coords, mapLoaded]);
+  
   return (
     <Card className="w-full h-full overflow-hidden border-0 shadow-none">
-      <CardContent className="p-0 h-full">
-        <MapContainer
-          center={coords || [17.4123, 78.4092]}
-          zoom={13}
-          style={{ height: '100%', width: '100%', zIndex: 0 }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          
-          {/* User location marker */}
-          {coords && (
-            <>
-              <Marker 
-                position={coords} 
-                icon={customIcon('#FF4136')}
-              >
-                <Popup>
-                  <div className="text-center">
-                    <strong>Your location</strong>
-                  </div>
-                </Popup>
-              </Marker>
-              
-              {/* Search radius circle */}
-              <Circle 
-                center={coords} 
-                radius={searchRadius} 
-                pathOptions={{ color: '#3B82F6', fillColor: '#3B82F6', fillOpacity: 0.1 }}
-              />
-            </>
-          )}
-          
-          {/* Hospital markers */}
-          {filteredHospitals.map((hospital) => (
-            <Marker
-              key={hospital.id}
-              position={hospital.position}
-              icon={customIcon('#0074D9')}
-              eventHandlers={{
-                click: () => setSelectedHospital(hospital)
-              }}
-            >
-              <Popup>
-                <div className="max-w-xs">
-                  <h3 className="font-bold text-sm">{hospital.name}</h3>
-                  <p className="text-xs text-gray-600 mt-1">{hospital.address}</p>
-                  {hospital.distance !== undefined && (
-                    <p className="text-xs font-medium mt-1">
-                      Distance: {(hospital.distance / 1000).toFixed(1)} km
-                    </p>
-                  )}
-                  <div className="mt-2">
-                    <p className="text-xs font-semibold">Specialties:</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {hospital.specialties.map((specialty, index) => (
-                        <span 
-                          key={index} 
-                          className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full"
-                        >
-                          {specialty}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <Button 
-                    className="w-full mt-3 text-xs py-1" 
-                    size="sm"
-                    onClick={() => setSelectedHospital(hospital)}
-                  >
-                    Show Route
-                  </Button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-          
-          {/* Route line */}
-          {coords && selectedHospital && (
-            <RouteLine from={coords} to={selectedHospital.position} />
-          )}
-          
-          {/* Update map view when user location changes */}
-          <SetViewOnUserLocation coords={coords} />
-        </MapContainer>
+      <CardContent className="p-0 h-full relative">
+        <div ref={mapContainer} className="w-full h-full" />
         
         {/* Hospital info panel */}
         {selectedHospital && (
@@ -226,8 +389,8 @@ export default function MapComponents({
                 className="flex-1" 
                 size="sm"
                 onClick={() => {
-                  // In a real app, this would open directions in Google Maps or similar
-                  const url = `https://www.google.com/maps/dir/?api=1&origin=${coords[0]},${coords[1]}&destination=${selectedHospital.position[0]},${selectedHospital.position[1]}&travelmode=driving`;
+                  // Open directions in Mapbox
+                  const url = `https://www.google.com/maps/dir/?api=1&origin=${coords?.[0]},${coords?.[1]}&destination=${selectedHospital.position[0]},${selectedHospital.position[1]}&travelmode=driving`;
                   window.open(url, '_blank');
                 }}
               >

@@ -82,7 +82,7 @@ function EnhancedHumanModel({
 }) {
   // Attempt to load the GLTF model
   const [modelLoadError, setModelLoadError] = useState(false);
-  const modelPath = `/models/group.glb`;
+  const modelPath = `/models/male_2.glb`;
   // const modelPath = `/models/male_2.glb`;
   // const modelPath = `/models/group.glb`;
   
@@ -340,7 +340,7 @@ function EnhancedHumanModel({
   return (
     <group ref={groupRef} position={[0, -1, 0]}>
       <Suspense fallback={<SimpleModel />}>
-        {!modelLoadError ? <GLTFModel /> : <SimpleModel />}
+        {!modelLoadError ? <SimpleModel /> : <SimpleModel />}
       </Suspense>
       
       {/* Hover label */}

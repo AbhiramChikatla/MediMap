@@ -1,0 +1,1105 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Apollo Hospitals Jubilee Hills",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Oncology", "Transplant Surgery"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.4256]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "KIMS Hospital Kondapur",
+        "specialties": ["Cardiology", "Orthopedics", "Gastroenterology", "Neurology", "Pediatrics"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3718, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Yashoda Hospital Somajiguda",
+        "specialties": ["Cardiology", "Neurology", "Oncology", "Nephrology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4601, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Care Hospitals Banjara Hills",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Gastroenterology", "Pulmonology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Apollo Hospitals Secunderabad",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Oncology", "General Surgery"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5016, 17.4372]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Apollo Hospitals Hyderguda",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Oncology", "Urology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4689, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "KIMS Hospital Secunderabad",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Nephrology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5107, 17.4412]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Yashoda Hospital Secunderabad",
+        "specialties": ["Cardiology", "Neurology", "Oncology", "Nephrology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4991, 17.4359]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Yashoda Hospital Malakpet",
+        "specialties": ["Cardiology", "Neurology", "Oncology", "Nephrology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5126, 17.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Yashoda Hospital Hitec City",
+        "specialties": ["Cardiology", "Neurology", "Oncology", "Nephrology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3809, 17.4435]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Care Hospitals Nampally",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Gastroenterology", "Pulmonology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4689, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Care Hospitals Musheerabad",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Gastroenterology", "Pulmonology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4892, 17.4121]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Care Hospitals Malakpet",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Gastroenterology", "Pulmonology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5126, 17.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Care Hospitals Hitec City",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Gastroenterology", "Pulmonology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3809, 17.4435]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Continental Hospitals Gachibowli",
+        "specialties": ["Cardiology", "Oncology", "Orthopedics", "Neuroscience", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3507, 17.4344]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Star Hospitals Banjara Hills",
+        "specialties": ["Cardiology", "Orthopedics", "Nephrology", "Neurology", "Urology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Star Hospitals Nanakramguda",
+        "specialties": ["Cardiology", "Orthopedics", "Nephrology", "Neurology", "Urology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3507, 17.4344]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Virinchi Hospitals Banjara Hills",
+        "specialties": ["Cardiology", "Neurology", "Orthopedics", "Gastroenterology", "Urology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Medicover Hospital Hitec City",
+        "specialties": ["Cardiology", "Orthopedics", "Neurology", "Gastroenterology", "Oncology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3809, 17.4435]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Medicover Hospital Madhapur",
+        "specialties": ["Cardiology", "Orthopedics", "Neurology", "Gastroenterology", "Oncology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3873, 17.4484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sunshine Hospitals Secunderabad",
+        "specialties": ["Orthopedics", "Joint Replacement", "Sports Medicine", "Spine Surgery", "Rheumatology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5107, 17.4412]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sunshine Hospitals Gachibowli",
+        "specialties": ["Orthopedics", "Joint Replacement", "Sports Medicine", "Spine Surgery", "Rheumatology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3507, 17.4344]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Gleneagles Global Hospital Lakdikapul",
+        "specialties": ["Transplant Surgery", "Cardiology", "Neurology", "Oncology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4601, 17.4039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Gleneagles Global Hospital LB Nagar",
+        "specialties": ["Transplant Surgery", "Cardiology", "Neurology", "Oncology", "Gastroenterology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.3495]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Basavatarakam Indo American Cancer Hospital",
+        "specialties": ["Surgical Oncology", "Medical Oncology", "Radiation Oncology", "Hematology", "Nuclear Medicine"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "MNJ Institute of Oncology",
+        "specialties": ["Surgical Oncology", "Medical Oncology", "Radiation Oncology", "Pediatric Oncology", "Palliative Care"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4689, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Nizam's Institute of Medical Sciences (NIMS)",
+        "specialties": ["Cardiology", "Neurology", "Nephrology", "Gastroenterology", "Surgical Oncology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4526, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Osmania General Hospital",
+        "specialties": ["General Medicine", "General Surgery", "Orthopedics", "Gynecology", "Pediatrics"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4801, 17.3809]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Gandhi Hospital",
+        "specialties": ["General Medicine", "General Surgery", "Orthopedics", "Gynecology", "Pediatrics"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4892, 17.4121]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Fernandez Hospital Hyderguda",
+        "specialties": ["Obstetrics", "Gynecology", "Neonatology", "Fetal Medicine", "Infertility"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4689, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Fernandez Hospital Bogulkunta",
+        "specialties": ["Obstetrics", "Gynecology", "Neonatology", "Fetal Medicine", "Infertility"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4801, 17.4039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Rainbow Children's Hospital Banjara Hills",
+        "specialties": ["Pediatrics", "Neonatology", "Pediatric Surgery", "Pediatric Neurology", "Pediatric Cardiology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Rainbow Children's Hospital Secunderabad",
+        "specialties": ["Pediatrics", "Neonatology", "Pediatric Surgery", "Pediatric Neurology", "Pediatric Cardiology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5107, 17.4412]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Rainbow Children's Hospital LB Nagar",
+        "specialties": ["Pediatrics", "Neonatology", "Pediatric Surgery", "Pediatric Neurology", "Pediatric Cardiology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.3495]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Rainbow Children's Hospital Kondapur",
+        "specialties": ["Pediatrics", "Neonatology", "Pediatric Surgery", "Pediatric Neurology", "Pediatric Cardiology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3718, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "L V Prasad Eye Institute Banjara Hills",
+        "specialties": ["Ophthalmology", "Cornea", "Retina", "Glaucoma", "Pediatric Ophthalmology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "L V Prasad Eye Institute Uppal",
+        "specialties": ["Ophthalmology", "Cornea", "Retina", "Glaucoma", "Pediatric Ophthalmology"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.4058]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Maxivision Eye Hospital Somajiguda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "LASIK", "Retina", "Glaucoma"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4601, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Maxivision Eye Hospital Kukatpally",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "LASIK", "Retina", "Glaucoma"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Maxivision Eye Hospital Dilsukhnagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "LASIK", "Retina", "Glaucoma"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Maxivision Eye Hospital Madhapur",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "LASIK", "Retina", "Glaucoma"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3873, 17.4484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Maxivision Eye Hospital Secunderabad",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "LASIK", "Retina", "Glaucoma"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5107, 17.4412]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Ameerpet",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4526, 17.4372]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Secunderabad",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5107, 17.4412]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kukatpally",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Dilsukhnagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Himayatnagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4801, 17.4039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Madhapur",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3873, 17.4484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Uppal",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.4058]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Habsiguda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.4058]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kothapet",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.3809]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Mehdipatnam",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Charminar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4747, 17.3616]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Malakpet",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5126, 17.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Abids",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4747, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Begumpet",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4601, 17.4372]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Bowenpally",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4747, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Miyapur",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3507, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kondapur",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3718, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Gachibowli",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3507, 17.4344]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Hitec City",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3809, 17.4435]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Banjara Hills",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Jubilee Hills",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.4256]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Somajiguda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4601, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Punjagutta",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4526, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Lakdikapul",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4601, 17.4039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Nampally",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4689, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Musheerabad",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4892, 17.4121]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kachiguda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4892, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Narayanguda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4801, 17.4039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Tarnaka",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.4121]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Malkajgiri",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.4484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital ECIL",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital AS Rao Nagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Sainikpuri",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Alwal",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kompally",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4747, 17.5073]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Jeedimetla",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.5073]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Balanagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital KPHB",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3873, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Chandanagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3507, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Manikonda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3718, 17.4039]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Shaikpet",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.3873, 17.4107]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Tolichowki",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.3936]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Attapur",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4338, 17.3616]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Rajendranagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.3616]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Shamshabad",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.4073, 17.2965]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital LB Nagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.3495]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Vanasthalipuram",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.3495]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Hayathnagar",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5952, 17.3495]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Nagole",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.3702]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Boduppal",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5952, 17.4058]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Nacharam",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5592, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Moula Ali",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5952, 17.4372]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kapra",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5952, 17.4484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Cherlapally",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5952, 17.4239]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Kushaiguda",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5952, 17.4639]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Yapral",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5472, 17.4856]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Bolarum",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.5073]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hospitalName": "Sadhuram Eye Hospital Secunderabad Cantonment",
+        "specialties": ["Ophthalmology", "Cataract Surgery", "Retina", "Glaucoma", "Cornea"]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5246, 17.4639]
+      }
+    }
+  ]
+}
