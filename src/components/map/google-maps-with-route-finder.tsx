@@ -136,12 +136,18 @@ export function GoogleMapsWithRouteFinder({
     }
   };
 
+  // Handle reset of route information and map
+  const handleReset = () => {
+    setRouteInfo(null);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Route Finder Form */}
       <div className="md:col-span-1">
         <RouteFinderForm 
           onFindRoute={handleFindRoute} 
+          onReset={handleReset}
           isLoading={isLoadingRoute} 
         />
         

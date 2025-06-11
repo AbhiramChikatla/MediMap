@@ -420,6 +420,17 @@ export default function MapComponentsGoogle({
       }
     );
   }, [coords, selectedHospital, isLoaded]);
+  
+  // Clear directions and selected hospital when routeDirections is reset
+  useEffect(() => {
+    if (routeDirections === null) {
+      setDirections(null);
+      // Clear selected hospital if it was set due to route finding
+      if (selectedHospital && !selectedHospital.placeId) {
+        setSelectedHospital(null);
+      }
+    }
+  }, [routeDirections, selectedHospital, setSelectedHospital]);
 
   // Map load callback
   const onLoad = useCallback((map: google.maps.Map) => {
@@ -474,6 +485,10 @@ export default function MapComponentsGoogle({
             streetViewControl: false,
             mapTypeControl: false,
             fullscreenControl: true,
+            gestureHandling: 'cooperative',
+            scrollwheel: true,
+            zoomControl: true,
+            keyboardShortcuts: false,
           }}
         >
           {/* User location marker */}

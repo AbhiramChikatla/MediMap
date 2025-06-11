@@ -9,10 +9,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 interface RouteFinderFormProps {
   onFindRoute: (source: string, destination: string, useCurrentLocation: boolean) => void;
+  onReset?: () => void;
   isLoading?: boolean;
 }
 
-export function RouteFinderForm({ onFindRoute, isLoading = false }: RouteFinderFormProps) {
+export function RouteFinderForm({ onFindRoute, onReset, isLoading = false }: RouteFinderFormProps) {
   const [source, setSource] = useState<string>('');
   const [destination, setDestination] = useState<string>('');
   const [useCurrentLocation, setUseCurrentLocation] = useState<boolean>(false);
@@ -20,6 +21,18 @@ export function RouteFinderForm({ onFindRoute, isLoading = false }: RouteFinderF
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onFindRoute(source, destination, useCurrentLocation);
+  };
+  
+  const handleReset = () => {
+    // Reset form fields
+    setSource('');
+    setDestination('');
+    setUseCurrentLocation(false);
+    
+    // Call parent reset function if provided
+    if (onReset) {
+      onReset();
+    }
   };
 
   return (
@@ -69,9 +82,20 @@ export function RouteFinderForm({ onFindRoute, isLoading = false }: RouteFinderF
             />
           </div>
           
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Finding Route...' : 'Find Route'}
-          </Button>
+          <div className="flex gap-2">
+            <Button type="submit" className="flex-1" disabled={isLoading}>
+              {isLoading ? 'Finding Route...' : 'Find Route'}
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="flex-1" 
+              onClick={handleReset}
+              disabled={isLoading}
+            >
+              Reset
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
