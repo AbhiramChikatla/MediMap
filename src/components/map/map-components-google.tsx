@@ -297,6 +297,12 @@ export default function MapComponentsGoogle({
             // Set nearest hospital
             if (allHealthcareProviders.length > 0) {
               setNearestHospital(allHealthcareProviders[0]);
+              
+              // If no hospital is selected yet, select the nearest one and show its info
+              if (!selectedHospital) {
+                setSelectedHospital(allHealthcareProviders[0]);
+                setInfoWindow(allHealthcareProviders[0]);
+              }
             }
           } else {
             // If clinic search fails, just use the hospitals we found
@@ -404,6 +410,9 @@ export default function MapComponentsGoogle({
   useEffect(() => {
     if (!isLoaded || !coords || !selectedHospital || !directionsService.current) return;
 
+    // Check if this is the nearest hospital being automatically selected
+    const isNearestHospital = nearestHospital && selectedHospital.id === nearestHospital.id;
+
     directionsService.current.route(
       {
         origin: { lat: coords[0], lng: coords[1] },
@@ -413,13 +422,19 @@ export default function MapComponentsGoogle({
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
           setDirections(result);
+          
+          // If this is the nearest hospital being automatically selected,
+          // make sure the info window is open
+          if (isNearestHospital && !infoWindow) {
+            setInfoWindow(selectedHospital);
+          }
         } else {
           console.error(`Directions request failed: ${status}`);
           setDirections(null);
         }
       }
     );
-  }, [coords, selectedHospital, isLoaded]);
+  }, [coords, selectedHospital, isLoaded, nearestHospital, infoWindow]);
   
   // Clear directions and selected hospital when routeDirections is reset
   useEffect(() => {
