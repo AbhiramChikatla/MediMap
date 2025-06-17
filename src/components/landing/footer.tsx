@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Facebook, Twitter, Instagram, Linkedin, Github, Zap, Mail } from 'lucide-react';
+import {  Twitter,  Linkedin, Github, Zap, Mail } from 'lucide-react';
 
 export function Footer() {
   return (
