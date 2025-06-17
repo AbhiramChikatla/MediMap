@@ -297,12 +297,6 @@ export default function MapComponentsGoogle({
             // Set nearest hospital
             if (allHealthcareProviders.length > 0) {
               setNearestHospital(allHealthcareProviders[0]);
-              
-              // If no hospital is selected yet, select the nearest one and show its info
-              if (!selectedHospital) {
-                setSelectedHospital(allHealthcareProviders[0]);
-                setInfoWindow(allHealthcareProviders[0]);
-              }
             }
           } else {
             // If clinic search fails, just use the hospitals we found
@@ -322,7 +316,7 @@ export default function MapComponentsGoogle({
         setIsLoadingPlaces(false);
       }
     });
-  }, [coords, map, isLoaded, searchRadius]);
+  }, [map, coords, isLoaded, searchRadius]);
 
   // Calculate distance between two points using Haversine formula
   const calculateDistance = useCallback((point1: [number, number], point2: [number, number]): number => {
@@ -410,9 +404,6 @@ export default function MapComponentsGoogle({
   useEffect(() => {
     if (!isLoaded || !coords || !selectedHospital || !directionsService.current) return;
 
-    // Check if this is the nearest hospital being automatically selected
-    const isNearestHospital = nearestHospital && selectedHospital.id === nearestHospital.id;
-
     directionsService.current.route(
       {
         origin: { lat: coords[0], lng: coords[1] },
@@ -422,19 +413,13 @@ export default function MapComponentsGoogle({
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
           setDirections(result);
-          
-          // If this is the nearest hospital being automatically selected,
-          // make sure the info window is open
-          if (isNearestHospital && !infoWindow) {
-            setInfoWindow(selectedHospital);
-          }
         } else {
           console.error(`Directions request failed: ${status}`);
           setDirections(null);
         }
       }
     );
-  }, [coords, selectedHospital, isLoaded, nearestHospital, infoWindow]);
+  }, [coords, selectedHospital, isLoaded]);
   
   // Clear directions and selected hospital when routeDirections is reset
   useEffect(() => {
@@ -603,7 +588,7 @@ export default function MapComponentsGoogle({
                     ))}
                   </div>
                 </div>
-                <button
+                {/* <button
                   className="w-full mt-3 text-xs py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                   onClick={() => {
                     setSelectedHospital(infoWindow);
@@ -611,7 +596,7 @@ export default function MapComponentsGoogle({
                   }}
                 >
                   Show Route
-                </button>
+                </button> */}
               </div>
             </InfoWindow>
           )}

@@ -1,4 +1,4 @@
-import { Footer, Hero } from "@/components/landing";
+import { Footer } from "@/components/landing";
 import { Navbar } from "@/components/landing/navbar";
 
 export default function DashboardLayout({
