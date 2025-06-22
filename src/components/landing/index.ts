@@ -6,3 +6,4 @@ export * from './stats';
 export * from './how-it-works';
 export * from './footer';
 export * from './pricing';
+export * from './health-tips';
