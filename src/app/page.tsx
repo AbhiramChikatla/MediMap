@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { CTA, Features, Footer, Hero, Pricing, Testimonials } from "@/components/landing"
+import { CTA, Features, Footer, Hero, Pricing, Testimonials, HealthTips } from "@/components/landing"
 import { Navbar } from '@/components/landing/navbar';
 
 export default function LandingPage() {
@@ -47,6 +47,9 @@ export default function LandingPage() {
 
       {/* Testimonials Section */}
       <Testimonials/>
+
+      {/* Health Tips Section */}
+      <HealthTips/>
 
       {/* Pricing Section */}
       <Pricing/>
