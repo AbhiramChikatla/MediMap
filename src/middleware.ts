@@ -6,11 +6,11 @@ import type { NextRequest } from "next/server";
 export default clerkMiddleware(async (auth, req) => {
   // Get authentication state
   const { userId } = await auth();
-  
+
   // Define public routes
-  const isPublicRoute = req.nextUrl.pathname === "/" || 
-                       req.nextUrl.pathname.startsWith("/api");
-  
+  const isPublicRoute = req.nextUrl.pathname === "/" ||
+    req.nextUrl.pathname.startsWith("/api");
+
   // Handle users who aren't authenticated
   if (!userId && !isPublicRoute) {
     return auth().redirectToSignIn({ returnBackUrl: req.url });

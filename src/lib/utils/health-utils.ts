@@ -45,13 +45,13 @@ export function calculateCalorieNeeds(
 ): number {
   // Using Mifflin-St Jeor Equation
   let bmr: number;
-  
+
   if (isMale) {
     bmr = 10 * weight + 6.25 * (height * 100) - 5 * age + 5;
   } else {
     bmr = 10 * weight + 6.25 * (height * 100) - 5 * age - 161;
   }
-  
+
   return Math.round(bmr * activityLevel);
 }
 
@@ -95,9 +95,9 @@ export function checkEmergencySymptoms(symptoms: string[]): boolean {
     'severe abdominal pain',
     'suicidal thoughts'
   ];
-  
-  return symptoms.some(symptom => 
-    emergencySymptoms.some(emergencySymptom => 
+
+  return symptoms.some(symptom =>
+    emergencySymptoms.some(emergencySymptom =>
       symptom.toLowerCase().includes(emergencySymptom)
     )
   );

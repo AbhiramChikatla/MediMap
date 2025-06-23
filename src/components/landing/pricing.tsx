@@ -34,7 +34,6 @@ const PricingTier = ({
     buttonVariant = "outline",
     popular = false,
 }: PricingTierProps) => {
-
     return (
         <motion.div
             className={`rounded-xl border ${
@@ -94,7 +93,7 @@ const PricingTier = ({
 };
 
 export function Pricing() {
-  const { isSignedIn } = useUser();
+    const { isSignedIn } = useUser();
 
     return (
         <section id="pricing" className="py-20 bg-gray-50">

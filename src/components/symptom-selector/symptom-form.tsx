@@ -91,7 +91,7 @@ export function SymptomForm({
                 }),
             });
             const data = await response.json();
-            console.log(data);  
+            console.log(data);
             // Optionally handle response
             onSubmit(selectedSymptoms, specialties);
         } catch (error) {
