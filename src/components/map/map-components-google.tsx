@@ -757,14 +757,14 @@ export default function MapComponentsGoogle({
                                     </div>
                                 </div>
                                 {/* <button
-                  className="w-full mt-3 text-xs py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  onClick={() => {
-                    setSelectedHospital(infoWindow);
-                    setInfoWindow(null);
-                  }}
-                >
-                  Show Route
-                </button> */}
+                                    className="w-full mt-3 text-xs py-1 px-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    onClick={() => {
+                                        setSelectedHospital(infoWindow);
+                                        setInfoWindow(null);
+                                    }}
+                                >
+                                    Show Route
+                                </button> */}
                             </div>
                         </InfoWindow>
                     )}
